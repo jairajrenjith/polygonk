@@ -1651,3 +1651,390 @@ footer {
   letter-spacing: 0.16em;
   line-height: 1;
 }
+/* =========================================================
+   CENSUS RANKING ADDITIONS
+========================================================= */
+
+.rank-head-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.report-button {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 10px;
+
+  color: #999;
+  background: #101010;
+  border: 1px solid #292929;
+
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.report-button:hover:not(:disabled) {
+  color: #e8ff4f;
+  border-color: #444;
+}
+
+.ranking-chart {
+  margin-top: 24px;
+  padding: 15px 0 17px;
+
+  border-top: 1px solid #202020;
+  border-bottom: 1px solid #202020;
+}
+
+.ranking-chart-row {
+  min-height: 14px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+}
+
+.ranking-chart-row + .ranking-chart-row {
+  margin-top: 6px;
+}
+
+.ranking-chart-rank {
+  color: #4f4f4f;
+  font-family: 'DM Mono', monospace;
+  font-size: 7px;
+}
+
+.ranking-chart-track {
+  position: relative;
+  height: 5px;
+  overflow: hidden;
+  background: #191919;
+}
+
+.ranking-chart-fill {
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  background: #e8ff4f;
+}
+
+.rank-badge {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 0 auto;
+}
+
+.rank-crown {
+  color: #e8ff4f;
+}
+
+.rank-medal-silver {
+  color: #aaa;
+}
+
+.rank-medal-bronze {
+  color: #777;
+}
+
+@media (max-width: 600px) {
+  .rank-head-actions {
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .report-button {
+    min-height: 30px;
+    padding: 0 8px;
+    font-size: 7px;
+  }
+
+  .ranking-chart {
+    margin-top: 20px;
+    padding: 13px 0 15px;
+  }
+
+  .ranking-chart-row {
+    grid-template-columns: 21px minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  .rank-badge {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .rank-head-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .report-button {
+    flex: 0 0 auto;
+  }
+}
+
+/* -----------------------------------------------------------
+   LIGHT MODE BUTTON
+----------------------------------------------------------- */
+
+.light-mode-button {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+  margin: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+
+  background: transparent;
+  color: #ffffff;
+
+  cursor: pointer;
+
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.light-mode-button:hover {
+  border-color: rgba(232, 255, 79, 0.55);
+  background: rgba(232, 255, 79, 0.06);
+  color: #e8ff4f;
+  transform: translateY(-1px);
+}
+
+.light-mode-button:active {
+  transform: translateY(0);
+}
+
+.light-mode-button svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 600px) {
+  .light-mode-button {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* -----------------------------------------------------------
+   LIGHT MODE PRANK
+----------------------------------------------------------- */
+
+.light-mode-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(8px);
+}
+
+.light-mode-modal {
+  width: min(440px, 100%);
+
+  padding: 34px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: #0d0d0d;
+
+  text-align: center;
+
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.light-mode-icon {
+  width: 54px;
+  height: 54px;
+
+  margin: 0 auto 20px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid rgba(232, 255, 79, 0.4);
+  border-radius: 50%;
+
+  color: #e8ff4f;
+}
+
+.light-mode-modal h2 {
+  margin: 14px 0 8px;
+
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.light-mode-modal p {
+  margin: 0;
+
+  color: #777;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.light-mode-countdown {
+  width: 76px;
+  height: 76px;
+
+  margin: 24px auto 18px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid rgba(232, 255, 79, 0.45);
+  border-radius: 50%;
+
+  color: #e8ff4f;
+
+  font-family: "DM Mono", monospace;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.light-mode-actions {
+  display: flex;
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-top: 26px;
+}
+
+.light-mode-actions button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.light-mode-prank {
+  position: relative;
+
+  width: min(620px, 100%);
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: #0d0d0d;
+
+  box-shadow: 0 24px 100px rgba(0, 0, 0, 0.6);
+}
+
+.light-mode-prank img {
+  display: block;
+
+  width: 100%;
+  max-height: 60vh;
+
+  object-fit: contain;
+
+  background: #000;
+}
+
+.light-mode-prank-copy {
+  padding: 24px 26px 28px;
+}
+
+.light-mode-prank-copy h2 {
+  margin: 10px 0 8px;
+
+  font-size: 26px;
+}
+
+.light-mode-prank-copy p {
+  max-width: 480px;
+
+  margin: 0 0 10px;
+
+  color: #888;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.light-mode-prank-copy strong {
+  color: #e8ff4f;
+
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.light-mode-prank-close {
+  position: absolute;
+
+  top: 12px;
+  right: 12px;
+
+  z-index: 2;
+
+  width: 32px;
+  height: 32px;
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+
+  background: rgba(0, 0, 0, 0.7);
+
+  color: #ffffff;
+
+  font-size: 22px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.light-mode-prank-close:hover {
+  border-color: rgba(232, 255, 79, 0.55);
+  color: #e8ff4f;
+}
+
+@media (max-width: 600px) {
+  .light-mode-overlay {
+    padding: 16px;
+  }
+
+  .light-mode-modal {
+    padding: 28px 20px;
+  }
+
+  .light-mode-actions {
+    flex-direction: column;
+  }
+
+  .light-mode-actions button {
+    width: 100%;
+  }
+
+  .light-mode-prank-copy {
+    padding: 20px;
+  }
+}

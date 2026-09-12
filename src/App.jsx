@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Camera,
   ChevronDown,
+  FileDown,
   CircleDot,
   ImagePlus,
   Info,
@@ -13,6 +14,7 @@ import {
   Upload,
   X,
 } from 'lucide-react'
+import jsPDF from 'jspdf'
 import './App.css'
 
 const API_BASE = '/api'
@@ -109,6 +111,10 @@ export default function App() {
 
   const [uploadedPreview, setUploadedPreview] = useState('')
 
+  const [lightModePrompt, setLightModePrompt] = useState(false)
+  const [lightModeCountdown, setLightModeCountdown] = useState(3)
+  const [showLightModePrank, setShowLightModePrank] = useState(false)
+
   const cameraOn =
     cameraState === 'live' ||
     cameraState === 'paused'
@@ -130,6 +136,169 @@ export default function App() {
 
   const largest = ranking[0]
 
+  const downloadReport = useCallback(() => {
+    if (!ranking.length) {
+      return
+    }
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'pt',
+      format: 'a4',
+    })
+
+    const pageWidth = pdf.internal.pageSize.getWidth()
+    const pageHeight = pdf.internal.pageSize.getHeight()
+    const margin = 42
+    const usableWidth = pageWidth - margin * 2
+    let y = 48
+
+    const ensureSpace = (height = 18) => {
+      if (y + height > pageHeight - 42) {
+        pdf.addPage()
+        y = 48
+      }
+    }
+
+    const addText = (text, size = 9, bold = false, gap = 14) => {
+      pdf.setFont('helvetica', bold ? 'bold' : 'normal')
+      pdf.setFontSize(size)
+      const lines = pdf.splitTextToSize(String(text), usableWidth)
+      ensureSpace(lines.length * gap + 4)
+      pdf.text(lines, margin, y)
+      y += lines.length * gap
+    }
+
+    const addHeading = (text) => {
+      ensureSpace(28)
+      pdf.setFont('helvetica', 'bold')
+      pdf.setFontSize(12)
+      pdf.text(text, margin, y)
+      y += 20
+    }
+
+    addText('POLYGONK', 20, true, 22)
+    addText('OFFICIAL GEOMETRIC CENSUS REPORT', 11, true, 18)
+    y += 8
+
+    addHeading('CENSUS SUMMARY')
+    addText(`Session ID: ${sessionId}`)
+    addText(`Objects catalogued: ${objects.length}`)
+    addText(`Shapes found: ${shapeCount}`)
+    addText(`Total apparent area: ${formatArea(totalArea)} px²`)
+    addText(`Images / frames scanned: ${scannedImages}`)
+    addText(
+      `Largest object: ${largest ? `${largest.display_name || largest.name} · ${formatArea(largest.area)} px²` : 'None'}`,
+    )
+    addText(
+      `Session started: ${sessionStarted ? new Date(sessionStarted).toLocaleString() : 'Not started'}`,
+    )
+    addText(`Report generated: ${new Date().toLocaleString()}`)
+    y += 8
+
+    addHeading('CURRENT RANKING')
+
+    const columns = [
+      { title: '#', x: margin, width: 24 },
+      { title: 'OBJECT', x: margin + 24, width: 125 },
+      { title: 'SHAPE', x: margin + 149, width: 80 },
+      { title: 'AREA', x: margin + 229, width: 78 },
+      { title: 'CONF.', x: margin + 307, width: 48 },
+      { title: 'OBS.', x: margin + 355, width: 40 },
+      { title: 'TRACK ID', x: margin + 395, width: usableWidth - 395 },
+    ]
+
+    const drawTableHeader = () => {
+      ensureSpace(24)
+      pdf.setFont('helvetica', 'bold')
+      pdf.setFontSize(7.5)
+      columns.forEach((column) => pdf.text(column.title, column.x, y))
+      y += 13
+    }
+
+    drawTableHeader()
+
+    ranking.forEach((item, index) => {
+      ensureSpace(28)
+      pdf.setFont('helvetica', 'normal')
+      pdf.setFontSize(7.5)
+
+      const values = [
+        String(index + 1),
+        item.display_name || item.name,
+        item.shape,
+        `${formatArea(item.area)} px²`,
+        `${Math.round((item.confidence || 0) * 100)}%`,
+        String(item.observations || 0),
+        item.track_id,
+      ]
+
+      values.forEach((value, columnIndex) => {
+        const column = columns[columnIndex]
+        const text = pdf.splitTextToSize(String(value), Math.max(20, column.width - 4))[0]
+        pdf.text(text, column.x, y)
+      })
+
+      y += 14
+      pdf.setDrawColor(225)
+      pdf.line(margin, y - 7, pageWidth - margin, y - 7)
+    })
+
+    y += 10
+    addHeading('OBJECT DETAILS')
+
+    ranking.forEach((item, index) => {
+      addText(`${index + 1}. ${item.display_name || item.name}`, 10, true, 15)
+      addText(`Track ID: ${item.track_id}`)
+      addText(`Shape: ${item.shape}`)
+      addText(`Shape score: ${item.shape_score ?? 'N/A'}`)
+      addText(`Apparent area: ${formatArea(item.area)} px²`)
+      addText(`Perimeter: ${formatArea(item.perimeter)} px`)
+      addText(`Confidence: ${Math.round((item.confidence || 0) * 100)}%`)
+      addText(`Observations: ${item.observations || 0}`)
+      addText(`Source: ${item.source || 'unknown'}`)
+      addText(`Bounding box: x ${item.x}% · y ${item.y}% · w ${item.w}% · h ${item.h}%`)
+      y += 6
+    })
+
+    addHeading('PREVIOUS RANKING')
+
+    if (previousRanking.length) {
+      previousRanking.forEach((item, index) => {
+        addText(
+          `${index + 1}. ${item.display_name || item.name} | ${item.shape} | ${formatArea(item.area)} px²`,
+        )
+      })
+    } else {
+      addText('No previous ranking yet.')
+    }
+
+    const pageCount = pdf.getNumberOfPages()
+    for (let page = 1; page <= pageCount; page += 1) {
+      pdf.setPage(page)
+      pdf.setFont('helvetica', 'normal')
+      pdf.setFontSize(7)
+      pdf.setTextColor(110)
+      pdf.text(
+        `Polygonk · Geometric Census · Page ${page} of ${pageCount}`,
+        margin,
+        pageHeight - 22,
+      )
+    }
+
+    pdf.save(`polygonk-census-${sessionId.slice(0, 8)}.pdf`)
+  }, [
+    largest,
+    objects.length,
+    previousRanking,
+    ranking,
+    scannedImages,
+    sessionId,
+    sessionStarted,
+    shapeCount,
+    totalArea,
+  ])
+
   /* -----------------------------------------------------------
      BACKEND HEALTH
   ----------------------------------------------------------- */
@@ -150,6 +319,27 @@ export default function App() {
 
     return () => clearInterval(timer)
   }, [checkBackend])
+
+  useEffect(() => {
+    if (!lightModePrompt) {
+      return
+    }
+
+    setLightModeCountdown(3)
+
+    const timer = setInterval(() => {
+      setLightModeCountdown((value) => {
+        if (value <= 1) {
+          clearInterval(timer)
+          return 0
+        }
+
+        return value - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [lightModePrompt])
 
   /* -----------------------------------------------------------
      MERGE DETECTIONS
@@ -877,6 +1067,29 @@ export default function App() {
       setSessionId(uid())
     }
 
+  const openLightModePrompt = () => {
+    setLightModeCountdown(3)
+    setLightModePrompt(true)
+  }
+
+  const cancelLightMode = () => {
+    setLightModePrompt(false)
+    setLightModeCountdown(3)
+  }
+
+  const confirmLightMode = () => {
+    if (lightModeCountdown !== 0) {
+      return
+    }
+
+    setLightModePrompt(false)
+    setShowLightModePrank(true)
+  }
+
+  const closeLightModePrank = () => {
+    setShowLightModePrank(false)
+  }
+
   /* -----------------------------------------------------------
      UI
   ----------------------------------------------------------- */
@@ -931,6 +1144,35 @@ export default function App() {
             POLYGONK
           </span>
         </div>
+
+        <button
+          className="light-mode-button"
+          onClick={openLightModePrompt}
+          aria-label="Switch to light mode"
+          title="Switch to light mode"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="4"
+              stroke="currentColor"
+              strokeWidth="1.7"
+            />
+            <path
+              d="M12 2V4M12 20V22M4.93 4.93L6.34 6.34M17.66 17.66L19.07 19.07M2 12H4M20 12H22M4.93 19.07L6.34 17.66M17.66 6.34L19.07 4.93"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
       </header>
 
       <main>
@@ -1284,16 +1526,52 @@ export default function App() {
                 </h2>
               </div>
 
-              <span className="count">
-                {objects.length
-                  .toString()
-                  .padStart(
-                    2,
-                    '0',
-                  )}{' '}
-                OBJECTS
-              </span>
+              <div className="rank-head-actions">
+                <span className="count">
+                  {objects.length
+                    .toString()
+                    .padStart(
+                      2,
+                      '0',
+                    )}{' '}
+                  OBJECTS
+                </span>
+
+                <button
+                  className="report-button"
+                  onClick={downloadReport}
+                  disabled={!ranking.length}
+                  title="Download census report as PDF"
+                >
+                  <FileDown size={14} />
+                  PDF report
+                </button>
+              </div>
             </div>
+
+            {ranking.length > 0 && (
+              <div className="ranking-chart" aria-label="Area ranking graph">
+                {ranking.map((item, index) => {
+                  const maxArea = largest?.area || 1
+                  const percentage = Math.max(4, (item.area / maxArea) * 100)
+
+                  return (
+                    <div className="ranking-chart-row" key={`chart-${item.track_id}`}>
+                      <span className="ranking-chart-rank">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+
+                      <div className="ranking-chart-track">
+                        <span
+                          className="ranking-chart-fill"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
 
             <div className="ranking-list">
               {!ranking.length ? (
@@ -1336,11 +1614,15 @@ export default function App() {
                       }
                     >
                       <span className="rank-no">
-                        {String(
-                          index + 1,
-                        ).padStart(
-                          2,
-                          '0',
+                        {index < 3 ? (
+                          <RankBadge rank={index + 1} />
+                        ) : (
+                          String(
+                            index + 1,
+                          ).padStart(
+                            2,
+                            '0',
+                          )
                         )}
                       </span>
 
@@ -1654,6 +1936,109 @@ export default function App() {
         </section>
       </main>
 
+      {lightModePrompt && (
+        <div className="light-mode-overlay">
+          <div className="light-mode-modal">
+            <div className="light-mode-icon">
+              <svg
+                width="30"
+                height="30"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="4"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                />
+                <path
+                  d="M12 2V4M12 20V22M4.93 4.93L6.34 6.34M17.66 17.66L19.07 19.07M2 12H4M20 12H22M4.93 19.07L6.34 17.66M17.66 6.34L19.07 4.93"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+
+            <span className="label">SYSTEM CONFIGURATION</span>
+
+            <h2>
+              Are you sure you want
+              <br />
+              to switch to light mode?
+            </h2>
+
+            <div className="light-mode-countdown">
+              {lightModeCountdown}
+            </div>
+
+            <p>
+              Please wait for the system
+              confirmation countdown.
+            </p>
+
+            <div className="light-mode-actions">
+              <button
+                className="secondary"
+                onClick={cancelLightMode}
+              >
+                No, stay here
+              </button>
+
+              <button
+                className="primary"
+                onClick={confirmLightMode}
+                disabled={lightModeCountdown !== 0}
+              >
+                Yes, switch
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLightModePrank && (
+        <div className="light-mode-overlay">
+          <div className="light-mode-prank">
+            <button
+              className="light-mode-prank-close"
+              onClick={closeLightModePrank}
+              aria-label="Close"
+            >
+              ×
+            </button>
+
+            <img
+              src="/mock_image.jpg"
+              alt="Light mode unavailable"
+            />
+
+            <div className="light-mode-prank-copy">
+              <span className="label">
+                SYSTEM RESPONSE
+              </span>
+
+              <h2>
+                Light mode?
+              </h2>
+
+              <p>
+                We regret to inform you that
+                Polygonk has absolutely no plans
+                to become bright.
+              </p>
+
+              <strong>
+                Darkness is a feature.
+              </strong>
+            </div>
+          </div>
+        </div>
+      )}
+
       <footer>
         <span>
           POLYGONK / SESSION{' '}
@@ -1667,6 +2052,53 @@ export default function App() {
         </span>
       </footer>
     </div>
+  )
+}
+
+function RankBadge({ rank }) {
+  if (rank === 1) {
+    return (
+      <svg
+        className="rank-badge rank-crown"
+        viewBox="0 0 24 24"
+        aria-label="First place"
+      >
+        <path
+          d="M4 18h16l-1.4 3H5.4L4 18Zm1.2-2.5L4 6l5 4 3-6 3 6 5-4-1.2 9.5H5.2Z"
+          fill="currentColor"
+        />
+      </svg>
+    )
+  }
+
+  return (
+    <svg
+      className={`rank-badge ${rank === 2 ? 'rank-medal-silver' : 'rank-medal-bronze'}`}
+      viewBox="0 0 24 24"
+      aria-label={`${rank === 2 ? 'Second' : 'Third'} place`}
+    >
+      <path
+        d="M7 2h4l1 5-3 2-3-2 1-5Zm6 0h4l1 5-3 2-3-2 1-5Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <circle
+        cx="12"
+        cy="15"
+        r="5.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M12 12.5v5M9.5 15h5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
   )
 }
 
