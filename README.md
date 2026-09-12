@@ -13,34 +13,58 @@
 - Team Lead: Jairaj R - College of Engineering Trivandrum
 
 ### Project Description
-[2-3 lines about what your project does]
+Polygonk lets you point a camera at any scene and discover the objects around you, the shapes they resemble, the space they occupy, and how they rank against each other. It keeps track of each object as you explore, turning everyday scenes into their own little geometric census.
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+Nobody knows which object in a room is the biggest when measured by its visible area in pixels. There is no standard way to settle these extremely important disputes.
 
 ### The Solution (that nobody asked for)
-[How are you solving it? Keep it fun!]
+Polygonk scans the scene, identifies and tracks each object, measures its apparent area, determines its shape, and ranks everything from largest to smallest. Now, every object can finally know where it stands.
 
 ## Technical Details
 ### Technologies/Components Used
+
 For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
+- **Languages:** JavaScript, Python, CSS
+- **Frameworks:** React, FastAPI
+- **Libraries:** OpenCV, Ultralytics YOLO, jsPDF, Lucide React
+- **Tools:** Vite, Git, GitHub, VS Code
 
 For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
+- **Main Components:** Laptop/PC, webcam or smartphone camera
+- **Specifications:** Any device capable of running a modern web browser and accessing a camera
+- **Tools Required:** No dedicated hardware required
 
 ### Implementation
+
 For Software:
+
 # Installation
-[commands]
+
+```bash
+git clone https://github.com/jairajrenjith/polygonk.git
+cd polygonk
+npm install
+```
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
 
 # Run
-[commands]
+
+```bash
+cd backend
+uvicorn main:app --reload
+```
+
+In a new terminal:
+
+```bash
+cd frontend
+npm run dev
+```
 
 ### Project Documentation
 For Software:
