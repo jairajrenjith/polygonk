@@ -108,7 +108,7 @@ For Software:
 
 ### Project Demo
 # Video
-[Watch Demo](https://github.com)
+[https://drive.google.com/file/d/1gPDa20PXEZ3HViSKwXOUTGlcG12De61F/view?usp=sharing](https://drive.google.com/file/d/1gPDa20PXEZ3HViSKwXOUTGlcG12De61F/view?usp=sharing)
 
 *Demonstration of Polygonk detecting, tracking, measuring, and ranking objects in real time.*
 
