@@ -88,15 +88,18 @@ Open the generated `https://*.trycloudflare.com` URL on your mobile device.
 ### Project Documentation
 For Software:
 
-# Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+# Screenshots
+![Polygonk Camera Detection](screenshots/camera-detection.png)
+*Live camera view showing detected objects, labels, shapes, and apparent area.*
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+![Polygonk Ranking](screenshots/ranking.png)
+*Geometric census ranking objects from largest to smallest based on apparent area.*
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+![Polygonk Light Mode](screenshots/light-mode.png)
+*The system's response when attempting to switch from the dark interface to light mode.*
+
+![Polygonk Object Details](screenshots/object-details.png)
+*Detailed information displayed when selecting an object from the ranking.*
 
 # Diagrams
 ![Polygonk Workflow](polygonk-workflow.png)
@@ -109,7 +112,9 @@ For Software:
 *Explain what the video demonstrates*
 
 # Additional Demos
-[Add any extra demo materials/links]
+[Add your demo video link here]
+
+*Demonstration of Polygonk detecting, tracking, measuring, and ranking objects in real time.*
 
 ## Team Contributions
 - Jairaj R : Project development, implementation, and integration
