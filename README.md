@@ -54,17 +54,36 @@ pip install -r requirements.txt
 
 # Run
 
+Start the backend:
+
 ```bash
 cd backend
 uvicorn main:app --reload
 ```
 
-In a new terminal:
+In a new terminal, start the frontend:
 
 ```bash
 cd frontend
 npm run dev
 ```
+
+Open the local URL shown by Vite in your browser.
+
+**For mobile access:**
+
+```bash
+npm run build
+npm run preview -- --host=0.0.0.0
+```
+
+Then expose the preview server using Cloudflare Tunnel:
+
+```bash
+cloudflared tunnel --protocol http2 --url http://localhost:4173
+```
+
+Open the generated `https://*.trycloudflare.com` URL on your mobile device.
 
 ### Project Documentation
 For Software:
@@ -80,27 +99,9 @@ For Software:
 *Add caption explaining what this shows*
 
 # Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
+![Polygonk Workflow](polygonk-workflow.png)
+*Workflow showing how an image or camera frame is processed and turned into a geometric census.*
 
-For Hardware:
-
-# Schematic & Circuit
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
-
-# Build Photos
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
 
 ### Project Demo
 # Video
@@ -111,7 +112,7 @@ For Hardware:
 [Add any extra demo materials/links]
 
 ## Team Contributions
-- Jairaj R : Did the entire project
+- Jairaj R : Project development, implementation, and integration
 
 ---
 Made with ❤️ at TinkerHub Useless Projects 
