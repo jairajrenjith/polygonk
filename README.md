@@ -90,19 +90,24 @@ For Software:
 
 # Screenshots
 ![Polygonk Camera Detection](screenshots/camera-detection.png)
+
 *Live camera view showing detected objects, labels, shapes, and apparent area.*
 
 ![Polygonk Ranking](screenshots/ranking.png)
+
 *Geometric census ranking objects from largest to smallest based on apparent area.*
 
 ![Polygonk Light Mode](screenshots/light-mode.png)
+
 *The system's response when attempting to switch from the dark interface to light mode.*
 
 ![Polygonk Object Details](screenshots/object-details.png)
+
 *Detailed information displayed when selecting an object from the ranking.*
 
 # Diagrams
 ![Polygonk Workflow](polygonk-workflow.png)
+
 *Workflow showing how an image or camera frame is processed and turned into a geometric census.*
 
 
