@@ -16,7 +16,9 @@
 Polygonk lets you point a camera at any scene and discover the objects around you, the shapes they resemble, the space they occupy, and how they rank against each other. It keeps track of each object as you explore, turning everyday scenes into their own little geometric census.
 
 ### The Problem (that doesn't exist)
-Nobody knows which object in a room is the biggest when measured by its visible area in pixels. There is no standard way to settle these extremely important disputes.
+## The Problem
+
+Nobody knows which object in a room is the biggest when measured by its visible area in pixels. With objects everywhere and no official ranking system, there is simply no standard way to settle these extremely important disputes.
 
 ### The Solution (that nobody asked for)
 Polygonk scans the scene, identifies and tracks each object, measures its apparent area, determines its shape, and ranks everything from largest to smallest. Now, every object can finally know where it stands.
