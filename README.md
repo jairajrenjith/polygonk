@@ -17,7 +17,6 @@ Polygonk lets you point a camera at any scene and discover the objects around yo
 
 ### The Problem (that doesn't exist)
 ## The Problem
-
 Nobody knows which object in a room is the biggest when measured by its visible area in pixels. With objects everywhere and no official ranking system, there is simply no standard way to settle these extremely important disputes.
 
 ### The Solution (that nobody asked for)
