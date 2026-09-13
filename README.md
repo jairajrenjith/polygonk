@@ -109,12 +109,9 @@ For Software:
 ### Project Demo
 # Video
 [Add your demo video link here]
-*Explain what the video demonstrates*
-
-# Additional Demos
-[Add your demo video link here]
 
 *Demonstration of Polygonk detecting, tracking, measuring, and ranking objects in real time.*
+
 
 ## Team Contributions
 - Jairaj R : Project development, implementation, and integration
