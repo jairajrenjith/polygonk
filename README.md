@@ -92,7 +92,7 @@ For Software:
 ![Polygonk Camera Detection](screenshots/camera-detection.png)
 *Live camera view showing detected objects, labels, shapes, and apparent area.*
 
-![Polygonk Ranking](screenshots/ranking.png)
+![Polygonk Ranking](screenshots/rank.png)
 *Geometric census ranking objects from largest to smallest based on apparent area.*
 
 ![Polygonk Light Mode](screenshots/light-mode.png)
